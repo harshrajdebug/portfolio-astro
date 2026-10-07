@@ -1,0 +1,31 @@
+---
+import { FILES } from "../data/findings.js";
+const prUrl = (pr) => `https://github.com/${pr.replace("#", "/pull/")}`;
+---
+<section class="page" id="page-work" data-page="work" aria-labelledby="h-work">
+      <p class="cmd"><span class="ps">$</span> <span id="h-work">ls -la /findings/</span></p>
+      <p class="dim">{FILES.length} entries -- click a filename to expand -- click [OPEN] to read the case -- state is live from GitHub</p>
+      <div class="table" role="table" aria-label="Findings">
+        <div class="row row--hdr" role="row"><span role="columnheader">NAME</span><span role="columnheader">PROJECT</span><span role="columnheader">STATE</span><span role="columnheader">CLAIMED</span><span role="columnheader">DESCRIPTION</span></div>
+        <div id="files" role="rowgroup">
+        {FILES.map((f, i) => (
+          <Fragment>
+            <div class="row" role="row"><button class="fname" type="button" aria-expanded="false" aria-controls={`det-${f.id}`} data-file={i}>{f.file}</button><span>{f.project}</span><span class={`st st--${f.state}`}>{f.state}</span><span class="claimed">"{f.claimed}" ✓</span><span>{f.title}{(f.also || []).map((pr) => <Fragment> <a class="pr" href={prUrl(pr)} target="_blank" rel="noopener">+ #{pr.split("#")[1]}</a></Fragment>)}</span></div>
+            <dl class="det" id={`det-${f.id}`} hidden>
+              <dt>SAID</dt><dd class="said">{f.said}</dd>
+              <dt>DID</dt><dd class="did">{f.did}</dd>
+              <dt>PR</dt><dd>{[f.pr, ...(f.also || [])].map((pr, k) => <Fragment>{k > 0 && " + "}<a href={prUrl(pr)} target="_blank" rel="noopener">{pr} ↗</a></Fragment>)}</dd>
+              <dd class="open"><span class="ps">$</span>cat {f.file} <button class="open-btn" type="button" data-open={i}>[OPEN]</button></dd>
+            </dl>
+          </Fragment>
+        ))}
+        </div>
+      </div>
+      <p class="cmd"><span class="ps">$</span> ls -la /built/</p>
+      <div class="table" role="table" aria-label="Built">
+        <div class="row row--hdr" role="row"><span role="columnheader">NAME</span><span role="columnheader">STACK</span><span role="columnheader">STATE</span><span role="columnheader">NOTE</span><span role="columnheader">DESCRIPTION</span></div>
+        <div class="row" role="row"><a class="fname" href="https://github.com/harshrajdebug/sigstore-guard" target="_blank" rel="noopener">SIGSTORE_GUARD.hook</a><span>Go</span><span class="st st--open">public</span><span>--</span><span>Admission webhook that turns away images not signed by someone it trusts</span></div>
+        <div class="row" role="row"><span class="fname fname--plain">PHISHARMOR.nn</span><span>PyTorch</span><span class="st">private</span><span class="ok">37.3% leak</span><span>Phishing detector that caught a duplicate-crop leak in its own test split: top-1 0.859 → 0.668</span></div>
+        <div class="row" role="row"><span class="fname fname--plain">DARKSCAN.onion</span><span>Go</span><span class="st">private</span><span>--</span><span>Tor hidden service scanner with an EXIF parser that finds where photos were taken</span></div>
+      </div>
+    </section>
